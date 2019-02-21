@@ -27,12 +27,23 @@ class Model(dict):
                 print "Error insertion {}".format(err)
             
         else:
-            print "update id: {}".format(self._id)
+            print ("update id: {}".format(self._id))
             self.db[collection].update(
                 { "_id": ObjectId(self._id) }, self)
-    
+
+    def save_multiple(self, collection, docs):
+        bulk = self.db[collection].initialize_ordered_bulk_op()
+        if not self._id:
+            try:
+                for doc in docs:
+                    bulk.insert(doc)
+                    print("insert doc: {}".format(doc))
+                result = bulk.execute()
+                return result
+            except Exception as err:
+                print "Error insertion {}".format(err)
+
     def reload(self, collection):
-        print "id: {}".format(self._id)
         if self._id:
             self.update(self.db[collection]\
                     .find_one({"_id": ObjectId(self._id)}))
@@ -46,7 +57,4 @@ class Model(dict):
 class Document(Model):
     client = pymongo.MongoClient(connector)
     db = client[database]
-
-    @property
-    def keywords(self):
-        return self.title.split()
+    
