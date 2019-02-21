@@ -173,7 +173,7 @@ def delete_one_loader(id):
     document._id = ObjectId(id)
     try:
         document.remove('load')
-        return flask_construct_response({u'id ': ObjectId(id)})
+        return flask_construct_response({u'id ': id})
     except Exception as err:
         return flask_constructor_error({u'message': err}, custom_error_code=400)
 
