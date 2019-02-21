@@ -55,7 +55,7 @@ def list_loader():
             try:
                 documents = collection.find()
                 docs = json.loads(dumps(documents))
-                return flask_construct_response({u'Documents': docs})
+                return flask_construct_response({u'items': docs})
             except Exception as err:
                 return flask_constructor_error({u'message': err})
     except Exception as err:
@@ -111,6 +111,26 @@ def add_loader(batch):
     except Exception as err:
         return flask_constructor_error({u'message': err})
 
+@LOAD_API_BLUEPRINT.route(u'/load/<id>', methods=[u'GET'])
+def get_one_loader(id):
+    """
+    API ADD one Loader
+    :return: Flask Response
+    """
+    if bson.objectid.ObjectId.is_valid(id) !=True:
+        return flask_constructor_error("{} is not a valid ObjectId, it must be a 12-byte input or a 24-character hex string".format(id))
+    
+    document = Document()
+    document._id = ObjectId(id)
+    try:
+        my_document = collection.find({
+            "_id": ObjectId(document._id)
+        })
+        doc = json.loads(dumps(my_document))
+        return flask_construct_response({u'item': doc})
+    except Exception as err:
+        return flask_constructor_error({u'message': err}, custom_error_code=404)
+
 @LOAD_API_BLUEPRINT.route(u'/load/<id>', methods=[u'PUT'])
 def update_loader(id):
     """
@@ -122,7 +142,6 @@ def update_loader(id):
 
     try:
         data = request.get_json(force=True)
-        before = data
     except TypeError as err:
         flask_constructor_error({u'Error': err})
     data["datetime"] = datetime.strptime(data['datetime'], '%Y-%m-%d %H:%M:%S UTC')
@@ -154,7 +173,7 @@ def delete_one_loader(id):
     document._id = ObjectId(id)
     try:
         document.remove('load')
-        return flask_construct_response({u'id ': ObjectId(id)})
+        return flask_construct_response({u'id ': id})
     except Exception as err:
         return flask_constructor_error({u'message': err}, custom_error_code=400)
 
