@@ -67,16 +67,6 @@ def add_one_loader():
     API LIST Loader
     :return: Flask Response
     """
-    check = [
-        {
-            "datetime": "2029-01-01 00:00:00 UTC",
-            "load_value": 13
-        },
-        {
-            "datetime": "2029-01-01 01:00:00 UTC",
-            "load_value": 12
-        }
-    ]
     try:
         data = request.get_json(force=True)
     except TypeError as err:
