@@ -6,7 +6,6 @@ import time
 from datetime import datetime
 
 from flask import abort
-from google.appengine.api import users
 
 from config import CONFIG
 
