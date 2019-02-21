@@ -67,12 +67,24 @@ def add_one_loader():
     API LIST Loader
     :return: Flask Response
     """
+    check = [
+        {
+            "datetime": "2029-01-01 00:00:00 UTC",
+            "load_value": 13
+        },
+        {
+            "datetime": "2029-01-01 01:00:00 UTC",
+            "load_value": 12
+        }
+    ]
     try:
         data = request.get_json(force=True)
     except TypeError as err:
         flask_constructor_error({u'Error': err})
     data["datetime"] = datetime.strptime(data['datetime'], '%Y-%m-%d %H:%M:%S UTC')
+    print "data: {}".format(data)
     document = Document(data)
+    print "document: {}".format(document)
     try:
         document.save('load')
     except Exception as err:
@@ -103,11 +115,9 @@ def add_loader(batch):
 
     print("typeFichier: {}".format(type(fichier)))
     try:
-        for f in fichier:
-            f["datetime"] = datetime.strptime(f['datetime'], '%Y-%m-%d %H:%M:%S UTC')
-            document = Document(f)
-            document.save('load')
-        return flask_construct_response({u'items': fichier})
+        document = Document()
+        result = document.save_multiple('load', fichier)
+        return flask_construct_response(result)
     except Exception as err:
         return flask_constructor_error({u'message': err})
 
