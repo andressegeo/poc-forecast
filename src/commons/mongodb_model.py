@@ -3,6 +3,8 @@ from bson import ObjectId
 from itertools import imap
 from config import CONFIG
 from pprint import pprint
+from datetime import datetime
+
 
 database = CONFIG[u'db'][u'database']
 collection = CONFIG[u'db'][u'collection']
@@ -36,6 +38,7 @@ class Model(dict):
         if not self._id:
             try:
                 for doc in docs:
+                    doc[u'datetime'] = datetime.strptime(doc['datetime'], '%Y-%m-%d %H:%M:%S UTC')
                     bulk.insert(doc)
                     print("insert doc: {}".format(doc))
                 result = bulk.execute()
@@ -53,8 +56,20 @@ class Model(dict):
             self.db[collection].remove({"_id": ObjectId(self._id)})
             self.clear()
 
+    def check_index(self, collection):
+        result = sorted(list(self.db[collection].index_information()))
+        return result
+    
+    def create_index(self, collection, new_index):
+        print "new index: {}".format(new_index)
+        try:
+            self.db[collection].create_index([(new_index, pymongo.ASCENDING)], unique=True)
+        except Exception as err:
+            print err
+        result = sorted(list(self.db[collection].index_information()))
+        return result
+
 
 class Document(Model):
     client = pymongo.MongoClient(connector)
     db = client[database]
-    

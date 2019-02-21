@@ -187,6 +187,33 @@ def delete_one_loader(id):
     except Exception as err:
         return flask_constructor_error({u'message': err}, custom_error_code=400)
 
+@LOAD_API_BLUEPRINT.route(u'/load/index/', methods=[u'GET'])
+def check_index():
+    """
+    API DELETE Loader
+    :return: Flask Response
+    """
+    document = Document()
+    try:
+        result = document.check_index('load')
+        print("indexs on: {}".format(result))
+        return flask_construct_response(result)
+    except Exception as err:
+        return flask_constructor_error({u'message': err}, custom_error_code=400)
+
+@LOAD_API_BLUEPRINT.route(u'/load/index/new/', methods=[u'GET'])
+def create_index():
+    """
+    API DELETE Loader
+    :return: Flask Response
+    """
+    document = Document()
+    try:
+        result = document.create_index('load', 'datetime')
+        print("indexs on: {}".format(result))
+        return flask_construct_response(result)
+    except Exception as err:
+        return flask_constructor_error({u'message': err}, custom_error_code=400)
 
 @classmethod
 def is_valid(cls, oid):
