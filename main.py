@@ -4,7 +4,7 @@ from flask import Flask
 from config import CONFIG
 from src.commons.utils import init_logger
 from src.blueprint import (LOAD_API_BLUEPRINT)
-from src.blueprint.blueprint_utils import define_before_request_function, flask_constructor_error
+from src.blueprint.blueprint_utils import flask_constructor_error
 
 import src.requests as req
 
